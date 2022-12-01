@@ -1,4 +1,5 @@
-﻿using gestion_Almacen.Repositories.Interfaces.Usuarios;
+﻿using gestion_Almacen.Models;
+using gestion_Almacen.Repositories.Interfaces.Usuarios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,7 +19,7 @@ namespace gestion_Almacen.Controllers
         }
 
         // GET: UsuarioController
-        [HttpGet("usuario/get")]
+        [HttpGet("usuario/getAll")]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -31,10 +32,35 @@ namespace gestion_Almacen.Controllers
                 return StatusCode(500, ex.Message);
             }
         }   
-        [HttpGet("usuario/Prueba")]
-        public String prueba()
+        [HttpGet("usuario/getUsuarioId/{id}")]
+        public async Task<IActionResult> getUsuarioId(int id)
         {
-            return "Hola";
+            try
+            {
+                var usuario = await _usuarioRepository.GetById(id);
+                if(usuario == null)
+                    return NotFound();
+
+                return Ok(usuario);            
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("usuario/createUsuario")]
+        public async Task<IActionResult> createUsuario([FromBody] UsuarioLogin usuarioLogin)
+        {
+            try
+            {
+                var createUsuario = await _usuarioRepository.CreateUsuario(usuarioLogin);
+                return Ok(createUsuario);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }
